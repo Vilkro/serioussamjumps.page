@@ -2,75 +2,70 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Serious Sam Rocket Jumping</title>
-<meta name="description" content="The hidden art of rocket jumping in Serious Sam Classic — records, analysis, guides, and community.">
+<link rel="icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ── Reset & base ──────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html {
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(147,197,253,0.15) #0b0e14;
 }
-html::-webkit-scrollbar { display: none; }
+
+html::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #0b0e14;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: rgba(147,197,253,0.18);
+  border-radius: 3px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(147,197,253,0.35);
+}
 
 html, body {
   overflow-x: hidden;
 }
 
 body {
-  font-family: 'Inter', Arial, sans-serif;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
   color: #e5e7eb;
   background-color: #0b0e14;
-  background-image:
-    radial-gradient(ellipse at center, rgba(218,143,103,0.06) 0%, transparent 70%);
+  background-image: url("background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
-  line-height: 1.6;
 }
 
-/* Subtle grain overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
-  z-index: 0;
-}
-
-/* ── Navigation ────────────────────────────────────────────────────── */
-nav {
-  position: fixed;
+/* ===== NAV ===== */
+.nav {
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(11, 14, 20, 0.7);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid transparent;
-  padding: 0 32px;
-}
-
-.nav-border {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(147,197,253,0.35), transparent);
+  background: rgba(11,14,20,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(147,197,253,0.1);
 }
 
 .nav-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  height: 60px;
+  max-width: 900px;
+  margin: auto;
+  padding: 14px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -78,279 +73,250 @@ nav {
 
 .nav-logo {
   font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 2px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
   color: #ffd8a3;
   text-decoration: none;
-  text-shadow: 0 0 18px rgba(255,216,163,0.35);
+  text-shadow: 0 0 12px rgba(218,143,103,0.25);
 }
 
 .nav-links {
   display: flex;
-  gap: 8px;
-  list-style: none;
+  gap: 28px;
 }
 
 .nav-links a {
   color: #9ca3af;
   text-decoration: none;
   font-size: 14px;
-  font-weight: 500;
-  padding: 6px 14px;
-  border-radius: 6px;
-  transition: color 0.2s, background 0.2s;
+  letter-spacing: 0.5px;
+  transition: color 0.2s ease;
 }
 
-.nav-links a:hover,
+.nav-links a:hover {
+  color: #e5e7eb;
+}
+
 .nav-links a.active {
   color: #e5e7eb;
-  background: rgba(147,197,253,0.1);
+  font-weight: 600;
 }
 
-/* Hamburger (mobile) */
-.nav-toggle {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  padding: 4px;
-  background: none;
-  border: none;
+/* ===== MAIN CONTAINER ===== */
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 80px 24px 140px;
 }
 
-.nav-toggle span {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: #9ca3af;
-  border-radius: 2px;
-  transition: background 0.2s;
-}
-
-.nav-toggle:hover span { background: #e5e7eb; }
-
-/* ── Fade-in animations ────────────────────────────────────────────── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes loaderPulse {
-  0%   { opacity: 0.25; }
-  50%  { opacity: 1; }
-  100% { opacity: 0.25; }
-}
-
-.fade-in {
-  opacity: 0;
-  animation: fadeInUp 0.65s ease forwards;
-}
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.25s; }
-.delay-3 { animation-delay: 0.4s; }
-.delay-4 { animation-delay: 0.55s; }
-.delay-5 { animation-delay: 0.7s; }
-.delay-6 { animation-delay: 0.85s; }
-.delay-7 { animation-delay: 1.0s; }
-
-/* ── Main layout ───────────────────────────────────────────────────── */
-main {
-  position: relative;
-  z-index: 1;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px 80px;
-}
-
-/* ── Hero ──────────────────────────────────────────────────────────── */
+/* ===== HERO ===== */
 .hero {
   text-align: center;
-  padding: 140px 0 70px;
+  margin-bottom: 60px;
 }
 
 .hero h1 {
-  font-size: clamp(36px, 6vw, 64px);
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  line-height: 1.15;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  margin: 0 0 6px;
   color: #e5e7eb;
   text-shadow:
-    0 0 30px rgba(147,197,253,0.15),
-    0 6px 24px rgba(0,0,0,0.7);
-  margin-bottom: 4px;
+    0 0 14px rgba(147,197,253,0.18),
+    0 6px 18px rgba(0,0,0,0.7);
 }
 
-.hero h1 .gold {
+.hero h1 span {
   color: #ffd8a3;
-  font-size: clamp(40px, 7vw, 72px);
-  display: block;
+  font-size: 50px;
 }
 
 .hero-divider {
   width: 320px;
-  max-width: 90%;
   height: 2px;
-  margin: 24px auto;
-  background: linear-gradient(to right, transparent, rgba(218,143,103,0.8), transparent);
-  animation: loaderPulse 2.2s infinite;
+  margin: 20px auto 24px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(218,143,103,0.7),
+    transparent
+  );
+  animation: heroPulse 2.5s ease-in-out infinite;
 }
 
-.hero-subtitle {
-  font-size: clamp(14px, 2vw, 17px);
-  color: #9ca3af;
-  max-width: 540px;
+@keyframes heroPulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.hero p {
+  font-size: 16px;
+  opacity: 0.7;
+  line-height: 1.6;
+  max-width: 520px;
   margin: 0 auto;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  line-height: 1.7;
+  text-shadow: 2px 1px 1px #333333;
 }
 
-/* ── Cards grid ────────────────────────────────────────────────────── */
-.cards-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin: 60px 0;
+/* ===== SECTION CARDS ===== */
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 70px;
 }
 
-.card {
+.section-card {
   display: block;
-  text-decoration: none;
-  background: rgba(20, 24, 35, 0.75);
+  background: rgba(30,30,30,0.70);
   border: 1px solid rgba(147,197,253,0.25);
+  outline: 1px solid rgba(147,197,253,0.25);
   border-radius: 14px;
-  padding: 32px 28px 26px;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 14px;
+  padding: 28px 32px;
+  text-decoration: none;
+  color: #e5e7eb;
+  box-shadow: 2px 10px 20px rgba(0,0,0,0.3);
   opacity: 0;
-  transition: opacity 0.22s ease;
-  background: radial-gradient(ellipse at top left, var(--card-glow, rgba(255,255,255,0.04)), transparent 65%);
+  transform: translateY(16px);
+  animation: cardIn 0.5s ease forwards;
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 0 1px var(--card-border-hover, rgba(147,197,253,0.5));
-  border-color: var(--card-border-hover, rgba(147,197,253,0.5));
-  background: rgba(22, 27, 40, 0.85);
+.section-card:nth-child(1) { animation-delay: 0.1s; }
+.section-card:nth-child(2) { animation-delay: 0.2s; }
+.section-card:nth-child(3) { animation-delay: 0.3s; }
+.section-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes cardIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.card:hover::before { opacity: 1; }
-
-.card-icon {
-  font-size: 36px;
-  margin-bottom: 14px;
-  display: block;
-  line-height: 1;
+.section-card:hover {
+  background: rgba(30,30,30,0.9);
+  border-color: rgba(147,197,253,0.4);
+  outline-color: rgba(147,197,253,0.4);
+  transform: translateY(-2px);
 }
 
-.card-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--card-color, #e5e7eb);
-  margin-bottom: 10px;
+.section-card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
-.card-title .arrow {
-  margin-left: auto;
+.section-card-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.section-card-arrow {
   font-size: 18px;
-  opacity: 0.5;
-  transition: opacity 0.2s, transform 0.2s;
+  opacity: 0.3;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.card:hover .arrow {
-  opacity: 0.9;
+.section-card:hover .section-card-arrow {
+  opacity: 0.7;
   transform: translateX(3px);
 }
 
-.card-desc {
-  font-size: 14px;
-  color: #6b7280;
-  line-height: 1.65;
+.section-card-desc {
+  font-size: 15px;
+  opacity: 0.6;
+  line-height: 1.5;
+  margin: 0;
 }
 
-/* Card accent colors */
-.card-records {
-  --card-color: #f7d774;
-  --card-glow: rgba(247,215,116,0.07);
-  --card-border-hover: rgba(247,215,116,0.45);
-}
-.card-analysis {
-  --card-color: #60a5fa;
-  --card-glow: rgba(96,165,250,0.07);
-  --card-border-hover: rgba(96,165,250,0.45);
-}
-.card-guide {
-  --card-color: #34d399;
-  --card-glow: rgba(52,211,153,0.07);
-  --card-border-hover: rgba(52,211,153,0.45);
-}
-.card-community {
-  --card-color: #a78bfa;
-  --card-glow: rgba(167,139,250,0.07);
-  --card-border-hover: rgba(167,139,250,0.45);
+.section-card-line {
+  width: 60px;
+  height: 2px;
+  margin-bottom: 14px;
+  border-radius: 1px;
 }
 
-/* ── About section ─────────────────────────────────────────────────── */
+/* card accent colors */
+.section-card.records .section-card-title { color: #f7d774; }
+.section-card.records .section-card-line { background: rgba(247,215,116,0.5); }
+
+.section-card.analysis .section-card-title { color: #60a5fa; }
+.section-card.analysis .section-card-line { background: rgba(96,165,250,0.5); }
+
+.section-card.guide .section-card-title { color: #34d399; }
+.section-card.guide .section-card-line { background: rgba(52,211,153,0.5); }
+
+.section-card.community .section-card-title { color: #a78bfa; }
+.section-card.community .section-card-line { background: rgba(167,139,250,0.5); }
+
+/* placeholder cards */
+.section-card.placeholder {
+  opacity: 0;
+  animation: cardIn 0.5s ease forwards;
+  cursor: default;
+}
+
+.section-card.placeholder:hover {
+  transform: none;
+  background: rgba(30,30,30,0.70);
+  border-color: rgba(147,197,253,0.25);
+  outline-color: rgba(147,197,253,0.25);
+}
+
+.section-card.placeholder .section-card-arrow {
+  display: none;
+}
+
+.section-card.placeholder .section-card-desc::after {
+  content: " — Coming soon";
+  opacity: 0.5;
+  font-style: italic;
+}
+
+/* ===== ABOUT ===== */
 .about {
+  max-width: 600px;
+  margin: 0 auto 40px;
   text-align: center;
-  max-width: 680px;
-  margin: 0 auto 80px;
-  padding: 40px 0;
 }
 
-.about-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #4b5563;
-  margin-bottom: 18px;
-}
-
-.about h2 {
-  font-size: clamp(20px, 3vw, 26px);
-  font-weight: 700;
-  color: #e5e7eb;
-  margin-bottom: 20px;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+.about-divider {
+  width: 200px;
+  height: 1px;
+  margin: 0 auto 30px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(205,205,205,0.35),
+    transparent
+  );
 }
 
 .about p {
   font-size: 15px;
-  color: #6b7280;
-  line-height: 1.75;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  opacity: 0.6;
+  line-height: 1.7;
+  text-shadow: 2px 1px 1px #333333;
+  margin: 0 0 14px;
 }
 
-.about p + p {
-  margin-top: 14px;
-}
-
-/* ── Footer ────────────────────────────────────────────────────────── */
-footer {
-  position: relative;
-  z-index: 1;
+/* ===== FOOTER ===== */
+.site-footer {
+  margin-top: 0px;
+  padding: 24px 16px;
   text-align: center;
-  padding: 24px 16px 32px;
   font-size: 14px;
-  color: #4b5563;
+  color: #9ca3af;
 }
 
 .footer-inner {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding-top: 20px;
+  padding-top: 18px;
   position: relative;
 }
 
@@ -358,165 +324,150 @@ footer {
   content: "";
   position: absolute;
   top: 0;
-  left: -60px;
-  right: -60px;
+  left: 5%;
+  right: 5%;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
 }
 
-.footer-sep { opacity: 0.4; }
+.footer-sep {
+  opacity: 0.55;
+}
 
-/* ── Responsive ────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  nav { padding: 0 20px; }
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .hero h1 span {
+    font-size: 36px;
+  }
+
+  .hero-divider {
+    width: 200px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  .container {
+    padding: 80px 16px 100px;
+  }
+
+  .section-card {
+    padding: 22px 20px;
+  }
+
+  .section-card-title {
+    font-size: 19px;
+  }
+
+  .section-card-desc {
+    font-size: 14px;
+  }
+
+  .nav-inner {
+    padding: 12px 16px;
+  }
+
+  .nav-logo {
+    font-size: 16px;
+  }
 
   .nav-links {
-    display: none;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
-    background: rgba(11, 14, 20, 0.96);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    flex-direction: column;
-    padding: 12px 20px 20px;
-    gap: 4px;
-    border-bottom: 1px solid rgba(147,197,253,0.15);
+    gap: 18px;
   }
 
-  .nav-links.open { display: flex; }
-  .nav-links a { padding: 10px 12px; }
-  .nav-toggle { display: flex; }
-
-  .hero { padding: 110px 0 50px; }
-
-  .cards-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .nav-links a {
+    font-size: 13px;
   }
 
-  main { padding: 0 18px 60px; }
-}
-
-@media (max-width: 900px) and (min-width: 641px) {
-  .cards-grid { gap: 16px; }
+  .site-footer {
+    font-size: 13px;
+  }
 }
 </style>
 </head>
+
 <body>
 
-<!-- Navigation -->
-<nav>
+<nav class="nav">
   <div class="nav-inner">
-    <a class="nav-logo" href="/">SSJUMPS</a>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="/" class="active">Home</a></li>
-      <li><a href="/records/">Records</a></li>
-      <li><a href="/analysis/">Analysis</a></li>
-    </ul>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+    <a href="/" class="nav-logo">SeriousSamJumps</a>
+    <div class="nav-links">
+      <a href="/serioussamjumps.page" class="active">Home</a>
+      <a href="/records/">Records</a>
+      <a href="/analysis/">Analysis</a>
+    </div>
   </div>
-  <div class="nav-border"></div>
 </nav>
 
-<main>
+<div class="container">
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1 class="fade-in delay-1">
-      Serious Sam
-      <span class="gold">Rocket Jumping</span>
-    </h1>
-    <div class="hero-divider fade-in delay-2"></div>
-    <p class="hero-subtitle fade-in delay-3">
-      The hidden art of rocket jumping in Serious Sam Classic — an unexplored niche with surprising depth.
-    </p>
-  </section>
+  <div class="hero">
+    <h1 style="text-shadow: 5px 2px 5px black;">Serious Sam<br><span>Rocket Jumping</span></h1>
+    <div class="hero-divider"></div>
+    <p>The hidden art of rocket jumping in Serious Sam Classic — documented, analyzed, and taught.</p>
+  </div>
 
-  <!-- Cards -->
-  <section class="cards-grid" aria-label="Site sections">
+  <div class="sections">
 
-    <a class="card card-records fade-in delay-3" href="/records/">
-      <span class="card-icon">🏆</span>
-      <div class="card-title">
-        Records
-        <span class="arrow">→</span>
+    <a href="/records/" class="section-card records">
+      <div class="section-card-line"></div>
+      <div class="section-card-header">
+        <span class="section-card-title">Records</span>
+        <span class="section-card-arrow">→</span>
       </div>
-      <p class="card-desc">Community rocket jump records from TFE &amp; TSE. Watch the best jumps performed by top players.</p>
+      <p class="section-card-desc">Community rocket jump records from TFE & TSE. Watch the best jumps performed by top players.</p>
     </a>
 
-    <a class="card card-analysis fade-in delay-4" href="/analysis/">
-      <span class="card-icon">🔬</span>
-      <div class="card-title">
-        Analysis
-        <span class="arrow">→</span>
+    <a href="/analysis/" class="section-card analysis placeholder">
+      <div class="section-card-line"></div>
+      <div class="section-card-header">
+        <span class="section-card-title">Analysis</span>
+        <span class="section-card-arrow">→</span>
       </div>
-      <p class="card-desc">Deep dive into game mechanics — movement physics, rocket behavior, and techniques explored in detail.</p>
+      <p class="section-card-desc">Deep dive into game mechanics — movement physics, rocket behavior, and advanced techniques</p>
     </a>
 
-    <a class="card card-guide fade-in delay-5" href="/guide/">
-      <span class="card-icon">📖</span>
-      <div class="card-title">
-        Guide
-        <span class="arrow">→</span>
+    <a href="/guide/" class="section-card guide placeholder">
+      <div class="section-card-line"></div>
+      <div class="section-card-header">
+        <span class="section-card-title">Guide</span>
+        <span class="section-card-arrow">→</span>
       </div>
-      <p class="card-desc">Learn rocket jumping from scratch. A clear guide for any player — from your first jump to advanced techniques.</p>
+      <p class="section-card-desc">Learn rocket jumping from scratch. A clear path from your first jump to advanced techniques</p>
     </a>
 
-    <a class="card card-community fade-in delay-6" href="/community/">
-      <span class="card-icon">🔗</span>
-      <div class="card-title">
-        Community
-        <span class="arrow">→</span>
+    <a href="/community/" class="section-card community placeholder">
+      <div class="section-card-line"></div>
+      <div class="section-card-header">
+        <span class="section-card-title">Community</span>
+        <span class="section-card-arrow">→</span>
       </div>
-      <p class="card-desc">Connect with the Serious Sam rocket jumping community. Find servers, players, and custom maps.</p>
+      <p class="section-card-desc">Connect with Serious Sam rocket jumpers. Servers, players, and custom maps</p>
     </a>
 
-  </section>
+  </div>
 
-  <!-- About -->
-  <section class="about fade-in delay-7">
-    <p class="about-label">About</p>
-    <h2>What is this?</h2>
-    <p>
-      Serious Sam Classic has a rocket jumping scene that has gone largely undocumented — players have been pushing the limits of what's possible in TFE and TSE for years, producing jumps with a depth that rivals CS:S bhop communities.
-    </p>
-    <p>
-      This site exists to document that scene: tracking records, breaking down the physics, and teaching anyone who wants to learn. Check out the guide and try your first jump — it's more accessible than it looks.
-    </p>
-  </section>
+</div>
 
-</main>
-
-<!-- Footer -->
-<footer>
+<footer class="site-footer">
   <div class="footer-inner">
     <span>Serious Sam Rocket Jumping</span>
     <span class="footer-sep">•</span>
-    <span>Community Project</span>
+    <span>by Vilkro</span>
+    <span class="footer-sep">•</span>
+    <span>thekodyz@gmail.com</span>
   </div>
 </footer>
 
-<script>
-  // Hamburger toggle
-  const toggle = document.getElementById('navToggle');
-  const navLinks = document.getElementById('navLinks');
-
-  toggle.addEventListener('click', () => {
-    const open = navLinks.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', open);
-  });
-
-  // Close nav when a link is clicked on mobile
-  navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
-  });
-</script>
 </body>
 </html>
