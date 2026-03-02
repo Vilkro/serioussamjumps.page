@@ -1,3 +1,3 @@
 [submodule "records"]
-    path = records
-    url = https://github.com/Vilkro/records.git
+	path = records
+	url = https://github.com/Vilkro/records.git
